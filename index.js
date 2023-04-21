@@ -1,9 +1,12 @@
 const express = require('express');
 const app = express();
+const Point = require('./Point');
+const Robot = require('./Robot');
 
 var method = "turn";
 var value = 180;
 var time = 0;
+
 
 const console = require('console');
 const bodyParser = require('body-parser');
@@ -28,6 +31,20 @@ app.post('/submit', (req, res) => {
     time = req.body.time;
     res.send('Thanks for submitting the form!');
   });
+
+app.post('/coordinates', (req, res) => {
+  
+  const coordinates_text = req.body.coordinates;
+  const coordinates = JSON.parse(coordinates_text)
+  const points = []
+
+  coordinates.forEach(c => {
+    points.push(new Point(c));
+  });
+  const robbo = new Robot();
+  const instructions = robbo.generateInstructions(points);
+  res.send(JSON.stringify(instructions));
+});
 
 app.listen(process.env.PORT || 3000, () => {
   console.log('Server listening on port 3000');
