@@ -46,7 +46,9 @@ class Robot {
   generateInstructions(coordinates) {
     const instructions = []
     for (const c of coordinates) {
-      instructions.push(this.moveto(c));
+      let instruct = this.moveto(new Point(c.slice(0, 2)));
+      instruct.pendown = c[2];
+      instructions.push(instruct);
     }
     return instructions;
   }

@@ -1,11 +1,21 @@
 const express = require('express');
 const app = express();
-const Point = require('./Point');
 const Robot = require('./Robot');
 
 var method = "turn";
 var value = 180;
 var time = 0;
+
+var current_instructions = {
+  instructions: [],
+  id: -1
+};
+
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
 
 const console = require('console');
@@ -24,6 +34,10 @@ app.get('/api', (req, res) => {
     );
 });
 
+app.get('/api_coordinates', (req, res) => {
+  res.send(current_instructions);
+});
+
 app.post('/submit', (req, res) => {
     console.debug(req.body.value);
     value = req.body.value;
@@ -36,14 +50,15 @@ app.post('/coordinates', (req, res) => {
   
   const coordinates_text = req.body.coordinates;
   const coordinates = JSON.parse(coordinates_text)
-  const points = []
-
-  coordinates.forEach(c => {
-    points.push(new Point(c));
-  });
   const robbo = new Robot();
-  const instructions = robbo.generateInstructions(points);
-  res.send(JSON.stringify(instructions));
+  const instructions = robbo.generateInstructions(coordinates);
+  const t = getRandomInt(0, 10000);
+  const output = {
+    instructions: instructions,
+    id: t
+  }
+  current_instructions = output;
+  res.send("Successfully Updated!");
 });
 
 app.listen(process.env.PORT || 3000, () => {
