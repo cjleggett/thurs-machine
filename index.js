@@ -6,6 +6,8 @@ var method = "turn";
 var value = 180;
 var time = 0;
 
+var current_gyro;
+
 var current_instructions = {
   instructions: [],
   id: -1
@@ -38,6 +40,15 @@ app.get('/api_coordinates', (req, res) => {
   res.send(current_instructions);
 });
 
+app.get('/api_gyro', (req, res) => {
+  res.send(current_gyro);
+});
+
+app.get('/draw_circle', (req, res) => {
+  let diameter = 1000;
+  res.send(current_gyro);
+});
+
 app.post('/submit', (req, res) => {
     console.debug(req.body.value);
     value = req.body.value;
@@ -45,6 +56,20 @@ app.post('/submit', (req, res) => {
     time = req.body.time;
     res.send('Thanks for submitting the form!');
   });
+
+
+
+app.post('/gyro', (req, res) => {
+  let euler_x = req.body.euler_x * 180 / Math.PI;
+  let euler_y = req.body.euler_y * 180 / Math.PI;
+  let euler_z = req.body.euler_z * 180 / Math.PI;
+  current_gyro = {
+    x: euler_x,
+    y: euler_y,
+    z: euler_z,
+  }
+  res.send('Thanks, Geoff!');
+});
 
 app.post('/coordinates', (req, res) => {
   
